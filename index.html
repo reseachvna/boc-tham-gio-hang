@@ -15,24 +15,30 @@
         body {
             background-color: var(--bg);
             color: var(--text);
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 28px 16px 48px;
+        }
+        .page-wrapper {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
         }
         .container {
             background-color: var(--card);
             width: 100%;
-            max-width: 520px;
+            max-width: 540px;
+            margin: 0 auto;
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.45);
             border: 1px solid #334155;
         }
         h1 { text-align: center; color: #fbbf24; margin-bottom: 6px; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
-        p.subtitle { text-align: center; color: var(--muted); margin-bottom: 20px; font-size: 14px; }
-        .sync-status { text-align: center; font-size: 12px; color: #38bdf8; margin-bottom: 16px; }
+        p.subtitle { text-align: center; color: var(--muted); margin-bottom: 18px; font-size: 14px; }
+        .sync-status { text-align: center; font-size: 12px; color: #38bdf8; margin-bottom: 18px; }
         
         .baskets-grid {
             display: grid;
@@ -61,7 +67,7 @@
 
         .input-group { margin-bottom: 16px; }
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #cbd5e1; }
-        input[type="text"], input[type="password"] {
+        select, input[type="password"] {
             width: 100%;
             padding: 12px 16px;
             border-radius: 8px;
@@ -70,8 +76,9 @@
             color: white;
             font-size: 16px;
             outline: none;
+            cursor: pointer;
         }
-        input:focus { border-color: #fbbf24; }
+        select:focus, input[type="password"]:focus { border-color: #fbbf24; }
         
         button#drawBtn {
             width: 100%;
@@ -122,9 +129,55 @@
         }
         .reset-btn { background: none; border: none; color: #ef4444; font-size: 12px; cursor: pointer; text-decoration: underline; }
 
+        /* Khu vực 1 ảnh tổng thể 6 giỏ hàng ở cuối trang */
+        .overview-section {
+            background-color: var(--card);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        }
+        .overview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #334155;
+        }
+        .overview-header h2 { font-size: 18px; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.5px; }
+        .overview-header span { font-size: 13px; color: var(--muted); }
+
+        .overview-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            overflow: hidden;
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .overview-box img {
+            width: 100%;
+            height: auto;
+            display: block;
+            cursor: zoom-in;
+        }
+        .img-placeholder {
+            padding: 28px 16px;
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* Modal chung & Modal xem ảnh phóng to */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.88);
             display: none; justify-content: center; align-items: center;
             z-index: 1000; padding: 20px;
         }
@@ -137,6 +190,33 @@
             width: 100%;
             text-align: center;
             animation: popIn 0.25s ease-out;
+        }
+        .image-modal-box {
+            background: #1e293b;
+            border: 2px solid #38bdf8;
+            border-radius: 14px;
+            padding: 16px;
+            max-width: 1100px;
+            width: 100%;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .image-modal-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fbbf24;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .image-modal-box img {
+            width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #090e1a;
         }
         @keyframes popIn {
             0% { transform: scale(0.85); opacity: 0; }
@@ -155,34 +235,48 @@
 </head>
 <body>
 
-<div class="container">
-    <h1>Bốc Thăm Giỏ Hàng</h1>
-    <p class="subtitle">Dành cho 6 Leader • Mỗi người chỉ được bốc 1 lần</p>
-    <div class="sync-status" id="syncStatus">🔄 Đang đồng bộ dữ liệu trực tuyến...</div>
+<div class="page-wrapper">
+    <!-- Khung bốc thăm chính -->
+    <div class="container">
+        <h1>Bốc Thăm Giỏ Hàng</h1>
+        <p class="subtitle">Dành cho 6 Leader • Mỗi người chỉ được bốc 1 lần</p>
+        <div class="sync-status" id="syncStatus">🔄 Đang đồng bộ dữ liệu trực tuyến...</div>
 
-    <div class="baskets-grid" id="basketsGrid"></div>
+        <div class="baskets-grid" id="basketsGrid"></div>
 
-    <div class="input-group">
-        <label for="leaderName">Nhập tên Leader:</label>
-        <input type="text" id="leaderName" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="off">
-    </div>
+        <div class="input-group">
+            <label for="leaderSelect">Chọn tên Leader:</label>
+            <select id="leaderSelect">
+                <option value="">-- Chọn tên của bạn --</option>
+            </select>
+        </div>
 
-    <button id="drawBtn" onclick="startDraw()" disabled>Đang tải dữ liệu...</button>
+        <button id="drawBtn" onclick="startDraw()" disabled>Đang tải dữ liệu...</button>
 
-    <div class="loading-box" id="loadingBox">
-        <span style="font-size: 14px; color: #fbbf24;">Đang quay số và khóa giỏ hàng trên hệ thống...</span>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
+        <div class="loading-box" id="loadingBox">
+            <span style="font-size: 14px; color: #fbbf24;">Đang quay số và khóa giỏ hàng trên hệ thống...</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="history">
+            <h3>
+                <span>Bảng vàng kết quả (<span id="countText">0</span>/6)</span>
+                <button class="reset-btn" onclick="openResetModal()">Làm mới dữ liệu</button>
+            </h3>
+            <ul class="history-list" id="historyList"></ul>
         </div>
     </div>
 
-    <div class="history">
-        <h3>
-            <span>Bảng vàng kết quả (<span id="countText">0</span>/6)</span>
-            <button class="reset-btn" onclick="openResetModal()">Làm mới dữ liệu</button>
-        </h3>
-        <ul class="history-list" id="historyList"></ul>
-    </div>
+    <!-- Khu vực 1 ảnh tổng thể 6 giỏ hàng ở cuối trang -->
+    <section class="overview-section">
+        <div class="overview-header">
+            <h2>Ảnh Tổng Thể Danh Sách Căn (6 Giỏ Hàng)</h2>
+            <span>Bấm vào ảnh để phóng to xem chi tiết</span>
+        </div>
+        <div class="overview-box" id="overviewBox"></div>
+    </section>
 </div>
 
 <!-- Popup Chúc Mừng -->
@@ -210,16 +304,39 @@
     </div>
 </div>
 
+<!-- Popup Phóng To Ảnh Tổng Thể -->
+<div class="modal-overlay" id="imageModal" onclick="if(event.target===this) closeImageModal()">
+    <div class="image-modal-box">
+        <div class="image-modal-top">
+            <span>Ảnh Tổng Thể Danh Sách Căn — 6 Giỏ Hàng</span>
+            <button class="btn-cancel" style="padding: 6px 14px; font-size: 13px;" onclick="closeImageModal()">Đóng</button>
+        </div>
+        <img id="imageModalImg" src="" alt="Ảnh tổng thể 6 giỏ hàng">
+    </div>
+</div>
+
 <script>
-    // DÁN ĐƯỜNG LINK WEB APP URL TỪ GOOGLE APPS SCRIPT VÀO ĐÂY:
+    // 1. DÁN ĐƯỜNG LINK WEB APP URL TỪ GOOGLE APPS SCRIPT VÀO ĐÂY:
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGtu-gZA6NgOQPBprEy6K7H0kyWkPOMiCzHRkY5aZiGCjhM0delR5o9XNTYWHqAlVC/exec";
+
+    // 2. DANH SÁCH 6 LEADER CỐ ĐỊNH:
+    const LEADERS = [
+        "Vũ Thái Duy",
+        "Nguyễn Quang Đàn",
+        "Nguyễn Tài Huy",
+        "Nguyễn Văn Luân",
+        "Đặng Ngọc Thức",
+        "Nguyễn Văn Việt"
+    ];
+
+    // 3. LINK HOẶC ĐƯỜNG DẪN 1 ẢNH TỔNG THỂ CÓ ĐỦ 6 GIỎ HÀNG:
+    const OVERVIEW_IMAGE = "images/giohang.jpg";
 
     const TOTAL_BASKETS = [1, 2, 3, 4, 5, 6];
     let availableBaskets = [];
     let drawHistory = [];
     let isDrawing = false;
 
-    // Tải dữ liệu mới nhất từ Google Sheets
     async function fetchData() {
         if (isDrawing) return;
         try {
@@ -236,6 +353,16 @@
         }
     }
 
+    function renderOverviewImage() {
+        const box = document.getElementById('overviewBox');
+        const imgUrl = (OVERVIEW_IMAGE || "").trim();
+        if (imgUrl) {
+            box.innerHTML = `<img src="${imgUrl}" alt="Ảnh tổng thể 6 giỏ hàng" onclick="openImageModal('${imgUrl.replace(/'/g, "\\'")}')">`;
+        } else {
+            box.innerHTML = `<div class="img-placeholder">Chưa gắn link ảnh tổng thể 6 giỏ hàng.<br>Vui lòng điền đường dẫn ảnh vào biến <code>OVERVIEW_IMAGE</code> trong file <code>index.html</code>.</div>`;
+        }
+    }
+
     function renderUI() {
         const grid = document.getElementById('basketsGrid');
         grid.innerHTML = '';
@@ -245,6 +372,22 @@
             div.className = `basket-item ${isAvailable ? '' : 'taken'}`;
             div.innerText = isAvailable ? `Giỏ hàng số ${num}` : `Giỏ số ${num} (Đã bốc)`;
             grid.appendChild(div);
+        });
+
+        const selectEl = document.getElementById('leaderSelect');
+        const currentSelected = selectEl.value;
+        const drawnNames = new Set(drawHistory.map(item => String(item.name).toLowerCase()));
+        const remainingLeaders = LEADERS.filter(name => !drawnNames.has(name.toLowerCase()));
+
+        selectEl.innerHTML = '<option value="">-- Chọn tên của bạn --</option>';
+        remainingLeaders.forEach(name => {
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.textContent = name;
+            if (name === currentSelected) {
+                opt.selected = true;
+            }
+            selectEl.appendChild(opt);
         });
 
         const list = document.getElementById('historyList');
@@ -263,17 +406,16 @@
 
         document.getElementById('countText').innerText = drawHistory.length;
         const drawBtn = document.getElementById('drawBtn');
-        const nameInput = document.getElementById('leaderName');
 
         if (!isDrawing) {
-            if (availableBaskets.length === 0) {
+            if (availableBaskets.length === 0 || remainingLeaders.length === 0) {
                 drawBtn.disabled = true;
-                drawBtn.innerText = 'Đã hết giỏ hàng';
-                nameInput.disabled = true;
+                drawBtn.innerText = 'Đã hoàn tất bốc thăm';
+                selectEl.disabled = true;
             } else {
                 drawBtn.disabled = false;
                 drawBtn.innerText = 'Bốc Thăm Giỏ Hàng';
-                nameInput.disabled = false;
+                selectEl.disabled = false;
             }
         }
     }
@@ -281,24 +423,25 @@
     async function startDraw() {
         if (isDrawing) return;
 
-        const nameInput = document.getElementById('leaderName');
-        const rawName = nameInput.value.trim();
+        const selectEl = document.getElementById('leaderSelect');
+        const selectedName = selectEl.value.trim();
 
-        if (!rawName) {
-            alert('Vui lòng nhập tên Leader trước khi bốc thăm!');
-            nameInput.focus();
+        if (!selectedName) {
+            alert('Vui lòng chọn tên Leader của bạn trước khi bốc thăm!');
+            selectEl.focus();
             return;
         }
 
-        const alreadyDrawn = drawHistory.some(item => item.name.toLowerCase() === rawName.toLowerCase());
+        const alreadyDrawn = drawHistory.some(item => String(item.name).toLowerCase() === selectedName.toLowerCase());
         if (alreadyDrawn) {
-            alert(`Anh "${rawName}" đã bốc thăm rồi! Mỗi Leader chỉ được bốc 1 lần.`);
+            alert(`Anh "${selectedName}" đã bốc thăm rồi! Mỗi Leader chỉ được bốc 1 lần.`);
+            renderUI();
             return;
         }
 
         isDrawing = true;
         document.getElementById('drawBtn').disabled = true;
-        nameInput.disabled = true;
+        selectEl.disabled = true;
 
         const loadingBox = document.getElementById('loadingBox');
         const progressFill = document.getElementById('progressFill');
@@ -310,11 +453,10 @@
             progressFill.style.width = '100%';
         }, 50);
 
-        // Chạy song song: đếm đủ 3 giây hiệu ứng VÀ gọi API chốt giỏ trên Google Sheets
         const minWait = new Promise(resolve => setTimeout(resolve, 3050));
         const apiCall = fetch(SCRIPT_URL, {
             method: "POST",
-            body: JSON.stringify({ action: "draw", name: rawName })
+            body: JSON.stringify({ action: "draw", name: selectedName })
         }).then(res => res.json());
 
         try {
@@ -324,7 +466,7 @@
             isDrawing = false;
 
             if (result.status === "success") {
-                nameInput.value = '';
+                selectEl.value = '';
                 await fetchData();
                 showPopup(result.name, result.basket);
             } else {
@@ -337,6 +479,16 @@
             alert("Lỗi kết nối mạng, vui lòng kiểm tra lại!");
             renderUI();
         }
+    }
+
+    function openImageModal(url) {
+        document.getElementById('imageModalImg').src = url;
+        document.getElementById('imageModal').style.display = 'flex';
+    }
+
+    function closeImageModal() {
+        document.getElementById('imageModal').style.display = 'none';
+        document.getElementById('imageModalImg').src = '';
     }
 
     function showPopup(leaderName, basketNumber) {
@@ -393,7 +545,7 @@
         }
     }
 
-    // Tải dữ liệu ngay khi mở trang và tự động làm mới mỗi 3 giây
+    renderOverviewImage();
     fetchData();
     setInterval(fetchData, 3000);
 </script>
