@@ -6,8 +6,6 @@
     <title>Bốc Thăm Giỏ Hàng Online</title>
     <style>
         :root {
-            --primary: #d97706;
-            --primary-hover: #b45309;
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f8fafc;
@@ -26,16 +24,16 @@
         .container {
             background-color: var(--card);
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
             padding: 30px;
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             border: 1px solid #334155;
         }
-        h1 { text-align: center; color: #fbbf24; margin-bottom: 8px; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
-        p.subtitle { text-align: center; color: var(--muted); margin-bottom: 24px; font-size: 14px; }
+        h1 { text-align: center; color: #fbbf24; margin-bottom: 6px; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        p.subtitle { text-align: center; color: var(--muted); margin-bottom: 20px; font-size: 14px; }
+        .sync-status { text-align: center; font-size: 12px; color: #38bdf8; margin-bottom: 16px; }
         
-        /* Trạng thái 6 giỏ hàng */
         .baskets-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -45,10 +43,11 @@
         .basket-item {
             background: #0f172a;
             border: 1px solid #334155;
-            padding: 12px;
+            padding: 12px 8px;
             border-radius: 8px;
             text-align: center;
             font-weight: bold;
+            font-size: 14px;
             color: #38bdf8;
             transition: all 0.3s;
         }
@@ -57,10 +56,9 @@
             color: #64748b;
             text-decoration: line-through;
             border-color: transparent;
-            opacity: 0.6;
+            opacity: 0.65;
         }
 
-        /* Form nhập liệu */
         .input-group { margin-bottom: 16px; }
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #cbd5e1; }
         input[type="text"], input[type="password"] {
@@ -73,7 +71,7 @@
             font-size: 16px;
             outline: none;
         }
-        input[type="text"]:focus, input[type="password"]:focus { border-color: #fbbf24; }
+        input:focus { border-color: #fbbf24; }
         
         button#drawBtn {
             width: 100%;
@@ -89,10 +87,8 @@
             transition: transform 0.1s, opacity 0.2s;
         }
         button#drawBtn:hover:not(:disabled) { background: linear-gradient(135deg, #fbbf24, #b45309); }
-        button#drawBtn:active:not(:disabled) { transform: scale(0.98); }
         button#drawBtn:disabled { background: #475569; cursor: not-allowed; opacity: 0.7; }
 
-        /* Thanh Loading 3s */
         .loading-box { display: none; margin-top: 20px; text-align: center; }
         .progress-bar {
             width: 100%;
@@ -110,7 +106,6 @@
             transition: width 3s linear;
         }
 
-        /* Lịch sử bốc thăm */
         .history { margin-top: 28px; border-top: 1px solid #334155; padding-top: 20px; }
         .history h3 { font-size: 15px; color: #cbd5e1; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .history-list { list-style: none; }
@@ -121,14 +116,12 @@
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 14px;
             border-left: 4px solid #fbbf24;
         }
-        .reset-btn {
-            background: none; border: none; color: #ef4444; font-size: 12px; cursor: pointer; text-decoration: underline;
-        }
+        .reset-btn { background: none; border: none; color: #ef4444; font-size: 12px; cursor: pointer; text-decoration: underline; }
 
-        /* Popup chung */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
@@ -154,18 +147,9 @@
         .modal p { font-size: 16px; line-height: 1.5; margin-bottom: 20px; color: #f8fafc; }
         .modal p strong { color: #38bdf8; font-size: 20px; }
         .modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
-        .btn-confirm {
-            padding: 10px 24px; background: #fbbf24; color: #0f172a;
-            border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer;
-        }
-        .btn-danger {
-            padding: 10px 24px; background: #ef4444; color: white;
-            border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer;
-        }
-        .btn-cancel {
-            padding: 10px 20px; background: #334155; color: #cbd5e1;
-            border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer;
-        }
+        .btn-confirm { padding: 10px 24px; background: #fbbf24; color: #0f172a; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .btn-danger { padding: 10px 24px; background: #ef4444; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .btn-cancel { padding: 10px 20px; background: #334155; color: #cbd5e1; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; }
         .error-text { color: #ef4444; font-size: 13px; margin-top: 8px; display: none; }
     </style>
 </head>
@@ -174,37 +158,34 @@
 <div class="container">
     <h1>Bốc Thăm Giỏ Hàng</h1>
     <p class="subtitle">Dành cho 6 Leader • Mỗi người chỉ được bốc 1 lần</p>
+    <div class="sync-status" id="syncStatus">🔄 Đang đồng bộ dữ liệu trực tuyến...</div>
 
-    <!-- Hiển thị trạng thái 6 giỏ hàng -->
     <div class="baskets-grid" id="basketsGrid"></div>
 
-    <!-- Khu vực nhập thông tin -->
     <div class="input-group">
         <label for="leaderName">Nhập tên Leader:</label>
         <input type="text" id="leaderName" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="off">
     </div>
 
-    <button id="drawBtn" onclick="startDraw()">Bốc Thăm Giỏ Hàng</button>
+    <button id="drawBtn" onclick="startDraw()" disabled>Đang tải dữ liệu...</button>
 
-    <!-- Thanh Loading 3 giây -->
     <div class="loading-box" id="loadingBox">
-        <span style="font-size: 14px; color: #fbbf24;">Đang quay số ngẫu nhiên...</span>
+        <span style="font-size: 14px; color: #fbbf24;">Đang quay số và khóa giỏ hàng trên hệ thống...</span>
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
     </div>
 
-    <!-- Bảng kết quả đã bốc -->
     <div class="history">
         <h3>
-            <span>Kết quả đã bốc (<span id="countText">0</span>/6)</span>
+            <span>Bảng vàng kết quả (<span id="countText">0</span>/6)</span>
             <button class="reset-btn" onclick="openResetModal()">Làm mới dữ liệu</button>
         </h3>
         <ul class="history-list" id="historyList"></ul>
     </div>
 </div>
 
-<!-- Popup thông báo trúng thưởng -->
+<!-- Popup Chúc Mừng -->
 <div class="modal-overlay" id="resultModal">
     <div class="modal">
         <div class="modal-icon">🎉</div>
@@ -214,28 +195,46 @@
     </div>
 </div>
 
-<!-- Popup nhập mật khẩu làm mới dữ liệu -->
+<!-- Popup Xác Nhận Admin -->
 <div class="modal-overlay" id="resetModal">
     <div class="modal" style="border-color: #ef4444;">
         <div class="modal-icon">🔒</div>
         <h2 style="color: #ef4444;">XÁC NHẬN QUẢN TRỊ</h2>
-        <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 12px;">Nhập mật khẩu để xóa toàn bộ kết quả và bắt đầu lượt mới:</p>
+        <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 12px;">Nhập mật khẩu để xóa toàn bộ kết quả trên hệ thống:</p>
         <input type="password" id="adminPassword" placeholder="Nhập mật khẩu..." onkeyup="if(event.key==='Enter') confirmReset()">
-        <div class="error-text" id="passError">Mật khẩu không chính xác!</div>
+        <div class="error-text" id="passError"></div>
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeResetModal()">Hủy</button>
-            <button class="btn-danger" onclick="confirmReset()">Xóa dữ liệu</button>
+            <button class="btn-danger" id="confirmResetBtn" onclick="confirmReset()">Xóa dữ liệu</button>
         </div>
     </div>
 </div>
 
 <script>
-    const TOTAL_BASKETS = [1, 2, 3, 4, 5, 6];
-    const ADMIN_PASS = "Myha1010";
+    // DÁN ĐƯỜNG LINK WEB APP URL TỪ GOOGLE APPS SCRIPT VÀO ĐÂY:
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGtu-gZA6NgOQPBprEy6K7H0kyWkPOMiCzHRkY5aZiGCjhM0delR5o9XNTYWHqAlVC/exec";
 
-    let availableBaskets = JSON.parse(localStorage.getItem('availableBaskets')) || [...TOTAL_BASKETS];
-    let drawHistory = JSON.parse(localStorage.getItem('drawHistory')) || [];
+    const TOTAL_BASKETS = [1, 2, 3, 4, 5, 6];
+    let availableBaskets = [];
+    let drawHistory = [];
     let isDrawing = false;
+
+    // Tải dữ liệu mới nhất từ Google Sheets
+    async function fetchData() {
+        if (isDrawing) return;
+        try {
+            const response = await fetch(SCRIPT_URL);
+            const data = await response.json();
+            if (data.status === "success") {
+                availableBaskets = data.available;
+                drawHistory = data.history;
+                renderUI();
+                document.getElementById('syncStatus').innerText = "🟢 Đã đồng bộ trực tuyến (Tự cập nhật mỗi 3 giây)";
+            }
+        } catch (err) {
+            document.getElementById('syncStatus').innerText = "🔴 Lỗi kết nối máy chủ. Đang thử lại...";
+        }
+    }
 
     function renderUI() {
         const grid = document.getElementById('basketsGrid');
@@ -252,7 +251,13 @@
         list.innerHTML = '';
         drawHistory.forEach(item => {
             const li = document.createElement('li');
-            li.innerHTML = `<span>Leader: <strong>${item.name}</strong></span> <span style="color:#fbbf24; font-weight:bold;">Giỏ hàng số ${item.basket}</span>`;
+            li.innerHTML = `
+                <div>
+                    <strong>${item.name}</strong>
+                    <div style="font-size:11px; color:#64748b;">${item.time || ''}</div>
+                </div>
+                <span style="color:#fbbf24; font-weight:bold;">Giỏ hàng số ${item.basket}</span>
+            `;
             list.appendChild(li);
         });
 
@@ -260,18 +265,20 @@
         const drawBtn = document.getElementById('drawBtn');
         const nameInput = document.getElementById('leaderName');
 
-        if (availableBaskets.length === 0) {
-            drawBtn.disabled = true;
-            drawBtn.innerText = 'Đã hết giỏ hàng';
-            nameInput.disabled = true;
-        } else {
-            drawBtn.disabled = false;
-            drawBtn.innerText = 'Bốc Thăm Giỏ Hàng';
-            nameInput.disabled = false;
+        if (!isDrawing) {
+            if (availableBaskets.length === 0) {
+                drawBtn.disabled = true;
+                drawBtn.innerText = 'Đã hết giỏ hàng';
+                nameInput.disabled = true;
+            } else {
+                drawBtn.disabled = false;
+                drawBtn.innerText = 'Bốc Thăm Giỏ Hàng';
+                nameInput.disabled = false;
+            }
         }
     }
 
-    function startDraw() {
+    async function startDraw() {
         if (isDrawing) return;
 
         const nameInput = document.getElementById('leaderName');
@@ -289,44 +296,47 @@
             return;
         }
 
-        if (availableBaskets.length === 0) {
-            alert('Tất cả 6 giỏ hàng đã được bốc hết!');
-            return;
-        }
-
         isDrawing = true;
         document.getElementById('drawBtn').disabled = true;
         nameInput.disabled = true;
 
         const loadingBox = document.getElementById('loadingBox');
         const progressFill = document.getElementById('progressFill');
-        
         loadingBox.style.display = 'block';
         progressFill.style.transition = 'none';
         progressFill.style.width = '0%';
-        
         setTimeout(() => {
             progressFill.style.transition = 'width 3s linear';
             progressFill.style.width = '100%';
         }, 50);
 
-        setTimeout(() => {
-            const randomIndex = Math.floor(Math.random() * availableBaskets.length);
-            const selectedBasket = availableBaskets[randomIndex];
+        // Chạy song song: đếm đủ 3 giây hiệu ứng VÀ gọi API chốt giỏ trên Google Sheets
+        const minWait = new Promise(resolve => setTimeout(resolve, 3050));
+        const apiCall = fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "draw", name: rawName })
+        }).then(res => res.json());
 
-            availableBaskets.splice(randomIndex, 1);
-
-            drawHistory.push({ name: rawName, basket: selectedBasket });
-            localStorage.setItem('availableBaskets', JSON.stringify(availableBaskets));
-            localStorage.setItem('drawHistory', JSON.stringify(drawHistory));
+        try {
+            const [_, result] = await Promise.all([minWait, apiCall]);
 
             loadingBox.style.display = 'none';
-            nameInput.value = '';
             isDrawing = false;
 
+            if (result.status === "success") {
+                nameInput.value = '';
+                await fetchData();
+                showPopup(result.name, result.basket);
+            } else {
+                alert(result.message || "Có lỗi xảy ra, vui lòng thử lại!");
+                await fetchData();
+            }
+        } catch (err) {
+            loadingBox.style.display = 'none';
+            isDrawing = false;
+            alert("Lỗi kết nối mạng, vui lòng kiểm tra lại!");
             renderUI();
-            showPopup(rawName, selectedBasket);
-        }, 3050);
+        }
     }
 
     function showPopup(leaderName, basketNumber) {
@@ -339,7 +349,6 @@
         document.getElementById('resultModal').style.display = 'none';
     }
 
-    // Xử lý mở/đóng và xác thực mật khẩu Reset
     function openResetModal() {
         document.getElementById('adminPassword').value = '';
         document.getElementById('passError').style.display = 'none';
@@ -351,22 +360,42 @@
         document.getElementById('resetModal').style.display = 'none';
     }
 
-    function confirmReset() {
+    async function confirmReset() {
         const inputPass = document.getElementById('adminPassword').value;
-        if (inputPass === ADMIN_PASS) {
-            localStorage.removeItem('availableBaskets');
-            localStorage.removeItem('drawHistory');
-            availableBaskets = [...TOTAL_BASKETS];
-            drawHistory = [];
-            closeResetModal();
-            renderUI();
-        } else {
-            document.getElementById('passError').style.display = 'block';
-            document.getElementById('adminPassword').focus();
+        const btn = document.getElementById('confirmResetBtn');
+        const errText = document.getElementById('passError');
+
+        btn.disabled = true;
+        btn.innerText = "Đang xử lý...";
+        errText.style.display = 'none';
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "reset", password: inputPass })
+            });
+            const result = await response.json();
+
+            if (result.status === "success") {
+                closeResetModal();
+                await fetchData();
+            } else {
+                errText.innerText = result.message;
+                errText.style.display = 'block';
+                document.getElementById('adminPassword').focus();
+            }
+        } catch (err) {
+            errText.innerText = "Lỗi kết nối máy chủ!";
+            errText.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Xóa dữ liệu";
         }
     }
 
-    renderUI();
+    // Tải dữ liệu ngay khi mở trang và tự động làm mới mỗi 3 giây
+    fetchData();
+    setInterval(fetchData, 3000);
 </script>
 
 </body>
